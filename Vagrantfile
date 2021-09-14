@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbooks/playbook.yml"
+    ansible.playbook = "playbooks/activate.yml"
     ansible.groups = {
       "http" => ["webserver"],
       "sql" => ["sqlserver"]
