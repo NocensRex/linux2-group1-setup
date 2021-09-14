@@ -1,0 +1,15 @@
+---
+# This is so ansible inventory is created
+# Might as well install aptitude while we are at it
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update repos
+      apt:
+        update_cache: yes
+
+    - name: Install Aptitude
+      apt:
+        name: aptitude
+        state: present
+

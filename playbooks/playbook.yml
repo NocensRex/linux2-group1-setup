@@ -1,5 +1,3 @@
----
-# This section is for all hosts
 - hosts: all
   become: yes
   tasks:
@@ -8,20 +6,15 @@
         update_cache: yes
         upgrade: yes
 
-    - name: Install Aptitude
-      apt:
-        name: aptitude
-        state: present
-
----
-# This section is only for the webserver(s)
-- hosts: http
-  become: yes
-  tasks:
+# ---
+# # This section is only for the webserver(s)
+# - hosts: http
+#   become: yes
+#   tasks:
 
 
----
-# This section is only for the sqlserver
-- hosts: sql
-  become: yes
-  tasks:
+# ---
+# # This section is only for the sqlserver
+# - hosts: sql
+#   become: yes
+#   tasks:
