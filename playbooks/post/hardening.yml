@@ -1,0 +1,61 @@
+- hosts: all
+  become: yes
+  tasks:
+    # Patching system
+    - name: Update all
+      package:
+        name: '*'
+        state: latest
+    
+    # Fixing secure ssh
+    - name: Add admin group
+      group:
+        name: admin
+        state: present
+
+    - name: Add local user
+      user:
+        name: admin
+        group: admin
+        shell: /bin/bash
+        home: /home/admin
+        create_home: yes
+        state: present
+
+    - name: Add SSH public key for user
+      authorized_key:
+        user: admin
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+        state: present
+
+    - name: Add sudoer rule for local user
+      copy:
+        dest: /etc/sudoers.d/admin
+        src: etc/sudoers.d/admin
+        owner: root
+        group: root
+        mode: 0440
+        validate: /usr/sbin/visudo -csf %s
+
+
+# Subnet to allow: 172.17.177.0/24
+# Change default ssh port from 22
+# Allow SSH on subnet and specific ip's
+# vars:
+#   allowed_ssh_networks:
+#     - 192.168.122.0/24
+#     - 10.10.10.0/24
+  # unnecessary_services:
+  #   - postfix
+  #   - telnet
+  # unnecessary_software:
+  #   - tcpdump
+  #   - nmap-ncat
+  #   - wpa_supplicant
+
+  
+  handlers:
+  - name: Reload SSH
+    service:
+      name: sshd
+      state: reloaded

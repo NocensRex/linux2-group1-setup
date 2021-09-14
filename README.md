@@ -4,6 +4,7 @@
 ### 1. Först måste desse instaleras 
 ```sh 
 sudo apt update && sudo apt install ansible virtualbox vagrant
+vagrant plugin install vagrant-disksize
 ```
 Det går även att köra allt på Windows
 
