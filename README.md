@@ -7,7 +7,9 @@ sudo apt update && sudo apt install ansible virtualbox vagrant
 ```
 Det går även att köra allt på Windows
 https://www.vagrantup.com/downloads
+
 https://www.virtualbox.org/wiki/Downloads
+
 https://geekflare.com/ansible-installation-windows/
 
 
