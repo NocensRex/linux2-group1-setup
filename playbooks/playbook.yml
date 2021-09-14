@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Update repos and upgrade
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Install Aptitude
+      apt:
+        name: aptitude
+        state: present
