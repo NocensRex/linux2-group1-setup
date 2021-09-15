@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
     machine.vm.hostname = "backup-srv"
   end
 
-  config.vm.define "loggingserver" do |machine|
+  config.vm.define "prometheusserver" do |machine|
     machine.vm.network "private_network", ip: "172.17.177.24"
     machine.vm.hostname = "logging-srv"
   end
@@ -34,10 +34,10 @@ Vagrant.configure("2") do |config|
   # https://www.vagrantup.com/docs/provisioning/ansible_local
     ansible.playbook = "playbooks/init/activate.yml"
     ansible.groups = {
-      "http" => ["webserver"],
-      "sql" => ["sqlserver"],
-      "bak" => ["backupserver"],
-      "log" => ["loggingserver"] 
+      "apacheservers" => ["webserver"],
+      "mysqlservers" => ["sqlserver"],
+      "backupservers" => ["backupserver"],
+      "prometheusservers" => ["prometheusserver"] 
     }
   end
 end
