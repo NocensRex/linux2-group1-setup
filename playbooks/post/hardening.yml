@@ -37,6 +37,15 @@
         mode: 0440
         validate: /usr/sbin/visudo -csf %s
 
+    - name: Allow all access from RFC1918 networks to this host
+      community.general.ufw:
+        rule: allow
+        src: '{{ item }}'
+      loop:
+        - 10.0.0.0/8
+        - 172.17.0.0/12
+        - 192.168.0.0/16
+
 
 # Subnet to allow: 172.17.177.0/24
 # Change default ssh port from 22
@@ -59,3 +68,14 @@
     service:
       name: sshd
       state: reloaded
+
+---
+- hosts: webserver
+  become: true
+  tasks:
+
+  - name: Allow all access to tcp port 80
+    community.general.ufw:
+      rule: allow
+      port: '80'
+      proto: tcp
