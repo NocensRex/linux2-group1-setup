@@ -1,0 +1,147 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  
+  - name: Include vars of serversetup_vars.yml
+    include_vars:
+      dir: vars
+
+  - name: Update apt on all servers
+    apt:
+      update_cache: yes
+
+  
+- hosts: apacheservers
+  become: true
+  tasks:
+
+  - name: Install apache and php dependencies
+    apt:
+      name:
+      - apache2
+      - php
+      - libapache2-mod-php
+      - php-mysql
+      state: latest
+
+  - name: Git clone latest version
+    git:
+      repo: "{{ repo }}"
+      clone: yes
+      dest: /src/{{ http_host }}
+      version: master
+      force: yes
+
+  - name: Copy cloned git to public apache folder
+    copy:
+      remote_src: yes
+      src: "/src/{{ http_host }}/"
+      dest: /var/www/{{ http_host }}
+      owner: www-data
+      group: www-data
+      mode: '0755'
+
+    ignore_errors: "{{ ansible_check_mode }}"
+
+  - name: Delete files in public folder
+    file:
+      path: /var/www/{{ http_host }}.git
+      state: absent
+
+  - name: Delete files in public folder
+    file:
+      path: /var/www/{{ http_host }}/{{ reposql | basename }}
+      state: absent
+
+  - name: Copy jinja2 virtualhost template
+    template:
+      src: "templates/apache.conf.j2"
+      dest: "/etc/apache2/sites-available/{{ http_host }}.conf"
+
+  - name: enable mod_rewrite on apache
+    apache2_module:
+      name=rewrite
+      state=present
+    notify:
+      - restart apache2
+    ignore_errors: "{{ ansible_check_mode }}"
+
+  - name: a2ensite {{ http_host }}
+    command: "a2ensite {{ http_host }}.conf"
+    notify:
+    - restart apache2
+
+  - name: a2dissite 000-default.conf
+    command: a2dissite 000-default.conf
+    notify:
+    - restart apache2
+
+  - name: Setup PHP-mysql host
+    replace:
+      path: "/var/www/{{ http_host }}/assest/db.php"
+      regexp: "'DB_SERVER', 'localhost'"
+      replace: "'DB_SERVER', '{{ mysql_server }}'"
+
+  - name: Setup PHP-mysql user
+    replace:
+      path: "/var/www/{{ http_host }}/assest/db.php"
+      regexp: "'DB_USERNAME', 'root'"
+      replace: "'DB_USERNAME', '{{ mysql_username }}'"
+
+  - name: Setup PHP-mysql pass
+    replace:
+      path: "/var/www/{{ http_host }}/assest/db.php"
+      regexp: "'DB_PASSWORD', ''"
+      replace: "'DB_PASSWORD', 'password'"
+
+  handlers:
+    - name: restart apache2
+      service:
+        name: apache2
+        state: restarted
+
+
+
+- hosts: mysqlservers
+  become: true
+  roles:
+  - { role: geerlingguy.mysql }
+
+  pre_tasks:
+
+    - name: Install mysql
+      apt:
+        name: mysql-server
+        state: latest
+
+  tasks:
+
+    - name: Create src/{{ http_host }} directory
+      file:
+        path: /src/{{ http_host }}
+        state: directory
+
+    - name: Download SQL file
+      get_url:
+        url: "{{ reposql }}"
+        dest: "/src/{{ http_host }}/"
+
+    - name: Import Databases
+      mysql_db:
+        name: "{{ db_name }}"
+        state: import
+        target: "/src/{{ http_host }}/{{ reposql | basename }}"
+
+    - name: edit my.cnf
+      lineinfile:
+        path: /etc/mysql/my.cnf
+        line: 'sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+        insertbefore: "# Logging configuration."
+
+    - name: Create database user with password and all database privileges and 'WITH GRANT OPTION'
+      community.mysql.mysql_user:
+        name: "{{ prometheus_mysqld_exporter_username }}"
+        password: "{{ prometheus_mysqld_exporter_password }}"
+        priv: '*.*:PROCESS/*.*:REPLICATION CLIENT/*.*:SELECT'
+        state: present

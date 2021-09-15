@@ -1,2 +1,15 @@
 ---
+# - name: Basics
+#   import_playbook: playbooks/post/playbook.yml
+    
+# - name: First
+#   import_playbook: 
+
+# - name: First
+#   import_playbook: 
+
+- name: Setting up servers 
+  import_playbook: playbooks/post/serversetup.yml
+
 - name: First
+  import_playbook: playbooks/post/monitoringsetup.yml

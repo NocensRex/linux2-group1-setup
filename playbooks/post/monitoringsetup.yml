@@ -1,0 +1,72 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Include vars of monitoring_vars.yml
+    include_vars:
+      file: vars/monitoring_vars.yml
+
+  - name: "Build hosts file"
+    lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+    when: hostvars[item].ansible_default_ipv4.address is defined
+    with_items: "{{ groups['all'] }}"
+
+
+- hosts: prometheus_servers
+  become: true
+  vars:
+    prometheus_server_cfg:
+      global:
+        scrape_interval: 15s
+
+      # Attach these labels to any time series or alerts when communicating with
+      # external systems (federation, remote storage, Alertmanager).
+        external_labels:
+          monitor: 'Linux2'
+
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+      scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+        - job_name: 'prometheus'
+
+        # Override the global default and scrape targets from this job every 5 seconds.
+          scrape_interval: 5s
+
+          file_sd_configs:
+            - files:
+              - /opt/prometheus/etc/tgroups/*.yml
+              - /opt/prometheus/etc/tgroups/*.yaml
+    prometheus_components:
+      - prometheus
+      - node_exporter
+    prometheus_port: 10000
+    prometheus_extra_opts:
+     - '--storage.tsdb.retention=90d'
+  roles:
+    - mesaguy.prometheus
+
+- hosts: mysqlservers
+  become: true
+  vars:
+    prometheus_components:
+      - mysqld_exporter
+      - node_exporter
+
+    prometheus_tgroup_labels:
+      environment: codelab-monitor
+      site: primary
+  roles:
+    - mesaguy.prometheus
+
+- hosts: apacheservers
+  become: true
+  vars:
+    prometheus_components:
+      - apache_exporter_lusitaniae
+    prometheus_tgroup_labels:
+      environment: codelab-monitor
+      site: primary
+  roles:
+    - mesaguy.prometheus

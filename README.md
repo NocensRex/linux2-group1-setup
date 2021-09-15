@@ -4,7 +4,9 @@
 ### 1. Först måste desse instaleras 
 ```sh 
 sudo apt update && sudo apt install ansible virtualbox vagrant
-vagrant plugin install vagrant-disksize
+vagrant plugin install vagrant-share
+ansible-galaxy install geerlingguy.mysql
+ansible-galaxy install mesaguy.prometheus
 ```
 Det går även att köra allt på Windows
 
@@ -22,7 +24,13 @@ vagrant up
 Här har nu två maskiner skapats (webserver och sqlserver)
 
 
-### 3. För att ssh:a in på maskinerna är det smidigast att köra
+### 3. Run ansible script to setup all the servers
+```sh
+ansible-playbook main.yml
+```
+
+
+### 4. För att ssh:a in på maskinerna är det smidigast att köra
 ```sh
 vagrant ssh <webserver eller sqlserver>
 ```
@@ -35,5 +43,6 @@ nu kan ni ssh:a in på maskinerna via vanliga ssh commandot på detta vis
 ssh <webserver eller sqlserver>
 ```
 
-### 4. Extra info
+
+### 5. Extra info
 * Inventory: .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory

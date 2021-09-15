@@ -1,0 +1,9 @@
+prometheus_manage_client_tgroups: true
+prometheus_software_server_side_connect_test: true
+prometheus_install_sponge: true
+prometheus_purge_orphans: false
+prometheus_tgroup_dir_purge_orphans: false
+prometheus_mysqld_exporter_username: exporter
+prometheus_mysqld_exporter_password: password
+prometheus_servers:
+ - 'prometheusserver'

@@ -1,0 +1,30 @@
+http_host: "PHP-Blog"
+repo: "https://github.com/KhalidLam/PHP-Blog.git"
+reposql: "https://raw.githubusercontent.com/KhalidLam/PHP-Blog/master/blog.sql"
+db_name: "blog"
+mysql_root_password: "password"
+mysql_server: "172.17.177.22"
+
+mysql_username: "{{ db_name }}_admin"
+mysql_databases:
+
+  - name: "{{ db_name }}"
+ 
+    state: absent
+ 
+  - name: "{{ db_name }}"
+ 
+    encoding: latin1
+ 
+    collation: latin1_general_ci
+ 
+ 
+mysql_users:
+ 
+  - name: "{{ mysql_username }}"
+ 
+    host: "%"
+ 
+    password: password
+ 
+    priv: "{{ db_name }}.*:ALL"
