@@ -12,23 +12,23 @@ Vagrant.configure("2") do |config|
   config.vm.define "webserver" do |machine|
     machine.vm.network "private_network", ip: "172.17.177.21"
     machine.vm.network "forwarded_port", guest: 80, host: 8080
-    machine.vm.hostname = "webserver"
+    machine.vm.hostname = "web-srv"
   end
 
   config.vm.define "sqlserver" do |machine|
     machine.vm.network "private_network", ip: "172.17.177.22"
-    machine.vm.hostname = "sqlserver"
+    machine.vm.hostname = "sql-srv"
   end
 
   config.vm.define "backupserver" do |machine|
     machine.vm.network "private_network", ip: "172.17.177.23"
-    machine.vm.hostname = "backupserver"
+    machine.vm.hostname = "backup-srv"
   end
 
   config.vm.define "prometheusserver" do |machine|
     machine.vm.network "private_network", ip: "172.17.177.24"
     machine.vm.network "forwarded_port", guest: 10000, host: 8085
-    machine.vm.hostname = "prometheusserver"
+    machine.vm.hostname = "logging-srv"
   end
 
   config.vm.provision "ansible" do |ansible|
