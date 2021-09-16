@@ -3,7 +3,7 @@ repo: "https://github.com/KhalidLam/PHP-Blog.git"
 reposql: "https://raw.githubusercontent.com/KhalidLam/PHP-Blog/master/blog.sql"
 db_name: "blog"
 mysql_root_password: "password"
-mysql_server: "172.17.177.22"
+mysql_server: "192.168.1.181"
 
 mysql_username: "{{ db_name }}_admin"
 mysql_databases:
