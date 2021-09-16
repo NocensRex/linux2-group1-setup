@@ -12,4 +12,131 @@
       apt:
         name: aptitude
         state: present
+    
+    - name: Include vars
+      include_vars:
+        dir: vars
+
+    - name: make direcotry
+      file:
+        path: "/home/vagrant/.ssh"
+        state: directory
+
+    - name: create empty file
+      file:
+        path: "/home/vagrant/.ssh/authorized_keys"
+        state: touch
+
+    - name: put pubkey
+      lineinfile:
+        path: "/home/vagrant/.ssh/authorized_keys"
+        line: "{{ pubkey }}"
+
+    # - name: create inventory
+    #   copy:
+    #     src: files/inventory
+    #     dest: /tmp/testinventory
+    #     owner: root
+    #     group: root
+    #     mode: 0777
+    #   delegate_to: 127.0.0.1
+
+    # - debug:
+    #     var: ansible_eth0.ipv4.address
+    # - debug:
+    #     var: ansible_eth1.ipv4.address
+    # - debug:
+    #     var: inventory_hostname
+
+
+- hosts: webserver
+  become: yes
+  tasks:
+    - name: append to inventory
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ lookup('template', 'host.j2') }}"
+        insertafter: '^\[all\]'
+      delegate_to: 127.0.0.1
+
+    - name: asd
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ inventory_hostname }}"
+        insertafter: '^\[apacheservers\]'
+      delegate_to: 127.0.0.1
+
+- hosts: mysqlservers
+  become: yes
+  tasks:
+    - name: append to inventory
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ lookup('template', 'host.j2') }}"
+        insertafter: '^\[all\]'
+      delegate_to: 127.0.0.1
+
+    - name: asd
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ inventory_hostname }}"
+        insertafter: '^\[mysqlservers\]'
+      delegate_to: 127.0.0.1
+
+- hosts: backupservers
+  become: yes
+  tasks:
+    - name: append to inventory
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ lookup('template', 'host.j2') }}"
+        insertafter: '^\[all\]'
+      delegate_to: 127.0.0.1
+
+    - name: asd
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ inventory_hostname }}"
+        insertafter: '^\[backupservers\]'
+      delegate_to: 127.0.0.1
+
+- hosts: prometheusservers
+  become: yes
+  tasks:
+    - name: append to inventory
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ lookup('template', 'host.j2') }}"
+        insertafter: '^\[all\]'
+      delegate_to: 127.0.0.1
+
+    - name: asd
+      lineinfile:
+        dest: /opt/linux2-group1/inventory
+        line: "{{ inventory_hostname }}"
+        insertafter: '^\[prometheusservers\]'
+      delegate_to: 127.0.0.1
+
+# ---
+# - hosts: all
+#   tasks:
+
+#   - name: Include vars
+#     include_vars:
+#       dir: vars
+
+#   - name: make direcotry
+#     file:
+#       path: "/home/vagrant/.ssh"
+#       state: directory
+
+#   - name: create empty file
+#     file:
+#       path: "/home/vagrant/.ssh/authorized_keys"
+#       state: touch
+
+#   - name: put pubkey
+#     lineinfile:
+#       path: "/home/vagrant/.ssh/authorized_keys"
+#       line: "{{ pubkey }}"
 

@@ -6,6 +6,8 @@
 sudo apt update && sudo apt install ansible virtualbox vagrant
 ansible-galaxy install geerlingguy.mysql
 ansible-galaxy install mesaguy.prometheus
+mkdir /opt/linux1-group1
+copy playbooks/init/files/inventory to our opt folder and give it read+write for all
 ```
 Det går även att köra allt på Windows
 

@@ -1,0 +1,9 @@
+[all]
+
+[apacheservers]
+
+[mysqlservers]
+
+[backupservers]
+
+[prometheusservers]

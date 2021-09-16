@@ -1,7 +1,5 @@
-sqlserver ansible_host=192.168.1.180
-backupserver ansible_host=192.168.1.181
-prometheusserver ansible_host=192.168.1.182
-webserver ansible_host=192.168.1.170
+[all]
+
 
 [apacheservers]
 webserver

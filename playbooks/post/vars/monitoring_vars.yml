@@ -6,4 +6,4 @@ prometheus_tgroup_dir_purge_orphans: false
 prometheus_mysqld_exporter_username: exporter
 prometheus_mysqld_exporter_password: password
 prometheus_servers:
- - 'logserver'
+ - 'prometheusserver'
